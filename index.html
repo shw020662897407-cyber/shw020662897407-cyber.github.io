@@ -80,7 +80,7 @@
         <input type="text" id="name4" placeholder="이름 4">
         <input type="text" id="name5" placeholder="이름 5">
         <input type="text" id="name6" placeholder="이름 6">
-        <input type="text" id="name7" placeholder="이름 7">
+        <input type="text" id="name7" placeholder="이름 7 (비워두면 6인 배정)">
     </div>
 
     <button id="assignBtn">랜덤 배정하기</button>
@@ -111,19 +111,23 @@
     <script>
         document.getElementById('assignBtn').addEventListener('click', function() {
             try {
-                var names = [];
-                // 1. 이름 가져오기
+                var rawNames = [];
+                // 1. 비어있지 않은 이름만 추출
                 for (var i = 1; i <= 7; i++) {
                     var inputVal = document.getElementById('name' + i).value;
-                    // 공백 제거 후 비어있으면 기본값 사용
-                    if (inputVal === null || inputVal.replace(/^\s+|\s+$/g, '') === '') {
-                        names.push('사람' + i);
-                    } else {
-                        names.push(inputVal.replace(/^\s+|\s+$/g, ''));
+                    if (inputVal !== null && inputVal.replace(/^\s+|\s+$/g, '') !== '') {
+                        rawNames.push(inputVal.replace(/^\s+|\s+$/g, ''));
                     }
                 }
 
-                // 2. 무작위로 섞기
+                // 2. 인원수 검증 (6명 또는 7명만 허용)
+                if (rawNames.length !== 6 && rawNames.length !== 7) {
+                    alert("이름을 6명 또는 7명 입력해주세요. (현재 " + rawNames.length + "명 입력됨)");
+                    return;
+                }
+
+                // 3. 무작위로 섞기
+                var names = rawNames.slice();
                 for (var j = names.length - 1; j > 0; j--) {
                     var k = Math.floor(Math.random() * (j + 1));
                     var temp = names[j];
@@ -131,14 +135,26 @@
                     names[k] = temp;
                 }
                 
-                // 3. 표에 출력하기
-                document.getElementById('am-new').innerHTML = names[0] + '<br>' + names[1];
-                document.getElementById('am-pt').innerHTML = names[2] + '<br>' + names[3];
-                document.getElementById('am-clinic').innerHTML = names[4] + '<br>' + names[5] + '<br>' + names[6];
+                // 4. 인원수에 따른 표 출력 로직
+                if (names.length === 6) {
+                    // 6명 로직
+                    document.getElementById('am-new').innerHTML = names[0];
+                    document.getElementById('am-pt').innerHTML = names[1] + '<br>' + names[2];
+                    document.getElementById('am-clinic').innerHTML = names[3] + '<br>' + names[4] + '<br>' + names[5];
 
-                document.getElementById('pm-new').innerHTML = names[4] + '<br>' + names[5];
-                document.getElementById('pm-pt').innerHTML = names[6] + '<br>' + names[0];
-                document.getElementById('pm-clinic').innerHTML = names[1] + '<br>' + names[2] + '<br>' + names[3];
+                    document.getElementById('pm-new').innerHTML = names[3];
+                    document.getElementById('pm-pt').innerHTML = names[4] + '<br>' + names[5];
+                    document.getElementById('pm-clinic').innerHTML = names[0] + '<br>' + names[1] + '<br>' + names[2];
+                } else if (names.length === 7) {
+                    // 7명 로직
+                    document.getElementById('am-new').innerHTML = names[0] + '<br>' + names[1];
+                    document.getElementById('am-pt').innerHTML = names[2] + '<br>' + names[3];
+                    document.getElementById('am-clinic').innerHTML = names[4] + '<br>' + names[5] + '<br>' + names[6];
+
+                    document.getElementById('pm-new').innerHTML = names[4] + '<br>' + names[5];
+                    document.getElementById('pm-pt').innerHTML = names[6] + '<br>' + names[0];
+                    document.getElementById('pm-clinic').innerHTML = names[1] + '<br>' + names[2] + '<br>' + names[3];
+                }
                 
             } catch(error) {
                 alert("배정 중 문제가 발생했습니다: " + error.message);
