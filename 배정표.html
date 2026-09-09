@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인원 배정 시스템</title>
+    <style>
+        body {
+            font-family: 'Pretendard', 'Malgun Gothic', sans-serif;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .input-group input {
+            flex: 1 1 calc(33.333% - 10px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        @media (max-width: 400px) {
+            .input-group input {
+                flex: 1 1 calc(50% - 10px);
+            }
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 2px solid #333;
+            padding: 15px 5px;
+            word-break: keep-all;
+            font-size: 15px;
+        }
+        th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        td {
+            height: 60px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>인원 배정 시스템</h2>
+    
+    <div class="input-group">
+        <input type="text" id="name1" placeholder="이름 1">
+        <input type="text" id="name2" placeholder="이름 2">
+        <input type="text" id="name3" placeholder="이름 3">
+        <input type="text" id="name4" placeholder="이름 4">
+        <input type="text" id="name5" placeholder="이름 5">
+        <input type="text" id="name6" placeholder="이름 6">
+        <input type="text" id="name7" placeholder="이름 7">
+    </div>
+
+    <button id="assignBtn">랜덤 배정하기</button>
+
+    <table>
+        <tr>
+            <th></th>
+            <th>오전</th>
+            <th>오후</th>
+        </tr>
+        <tr>
+            <th>신환</th>
+            <td id="am-new"></td>
+            <td id="pm-new"></td>
+        </tr>
+        <tr>
+            <th>물치</th>
+            <td id="am-pt"></td>
+            <td id="pm-pt"></td>
+        </tr>
+        <tr>
+            <th>진료실</th>
+            <td id="am-clinic"></td>
+            <td id="pm-clinic"></td>
+        </tr>
+    </table>
+
+    <script>
+        document.getElementById('assignBtn').addEventListener('click', function() {
+            try {
+                var names = [];
+                // 1. 이름 가져오기
+                for (var i = 1; i <= 7; i++) {
+                    var inputVal = document.getElementById('name' + i).value;
+                    // 공백 제거 후 비어있으면 기본값 사용
+                    if (inputVal === null || inputVal.replace(/^\s+|\s+$/g, '') === '') {
+                        names.push('사람' + i);
+                    } else {
+                        names.push(inputVal.replace(/^\s+|\s+$/g, ''));
+                    }
+                }
+
+                // 2. 무작위로 섞기
+                for (var j = names.length - 1; j > 0; j--) {
+                    var k = Math.floor(Math.random() * (j + 1));
+                    var temp = names[j];
+                    names[j] = names[k];
+                    names[k] = temp;
+                }
+                
+                // 3. 표에 출력하기
+                document.getElementById('am-new').innerHTML = names[0] + '<br>' + names[1];
+                document.getElementById('am-pt').innerHTML = names[2] + '<br>' + names[3];
+                document.getElementById('am-clinic').innerHTML = names[4] + '<br>' + names[5] + '<br>' + names[6];
+
+                document.getElementById('pm-new').innerHTML = names[4] + '<br>' + names[5];
+                document.getElementById('pm-pt').innerHTML = names[6] + '<br>' + names[0];
+                document.getElementById('pm-clinic').innerHTML = names[1] + '<br>' + names[2] + '<br>' + names[3];
+                
+            } catch(error) {
+                alert("배정 중 문제가 발생했습니다: " + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
